@@ -6,12 +6,12 @@
 // Execute `rustlings hint tests2` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
 #[cfg(test)]
 mod tests {
     #[test]
     fn you_can_assert_eq() {
-        assert_eq!();
+        let total = [1, 2, 3].iter().sum::<i32>();
+        assert_eq!(total, 6);
     }
 }
