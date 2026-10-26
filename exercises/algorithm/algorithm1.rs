@@ -2,8 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
-
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
@@ -69,15 +67,28 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+	pub fn merge(list_a: LinkedList<T>, list_b: LinkedList<T>) -> Self where T: Ord {
+        let (mut a, mut b) = (list_a.start, list_b.start);
+        let mut merged = Self::new();
+        while a.is_some() || b.is_some() {
+            // 两个输入链表已转移所有权，结点有效，重接结点时不复制或释放数据。
+            let take_a = match (a, b) {
+                (Some(x), Some(y)) => unsafe { x.as_ref().val <= y.as_ref().val },
+                (Some(_), None) => true,
+                _ => false,
+            };
+            let mut node = if take_a { a.unwrap() } else { b.unwrap() };
+            unsafe {
+                if take_a { a = node.as_ref().next; } else { b = node.as_ref().next; }
+                node.as_mut().next = None;
+                if let Some(mut tail) = merged.end { tail.as_mut().next = Some(node); }
+                else { merged.start = Some(node); }
+            }
+            merged.end = Some(node);
+            merged.length += 1;
         }
-	}
+        merged
+    }
 }
 
 impl<T> Display for LinkedList<T>
